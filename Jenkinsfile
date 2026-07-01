@@ -2,7 +2,7 @@ pipeline {
     
     agent any
     environment {
-        IMAGE_TAG = "$(BULID_NUMBER)"
+        IMAGE_TAG = "(BULID_NUMBER)"
 
     }
     stages {
