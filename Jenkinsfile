@@ -4,6 +4,7 @@ pipeline {
     
     environment {
         IMAGE_TAG = "${BUILD_NUMBER}"
+        REGISTRY_CREDENTIALS = credentials('docker-cred')
     }
     
     stages {
@@ -32,7 +33,9 @@ pipeline {
                 script{
                     sh '''
                     echo 'Push to Repo'
-                    docker push ramesh95/ultimate-cicd:${BUILD_NUMBER}
+                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
+                dockerImage.push()
+            }
                     '''
                 }
             }
