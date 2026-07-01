@@ -26,7 +26,7 @@ pipeline {
         }
         stage ('Push the artifacts') {
             environment {
-                DOCKER_IMAGE = "ramesh95/ultimate-cicd:${BUILD_NUMBER}"
+                DOCKER_IMAGE = "ramesh95/cicd-e2e:${BUILD_NUMBER}"
                 // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
                 REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
