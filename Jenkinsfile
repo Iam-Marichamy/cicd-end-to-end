@@ -28,20 +28,20 @@ pipeline {
             }
         }
 
-    stage('Push the artifacts'){
-        steps{
-            script{
-            // Only use 'sh' for plain shell commands like echo
-            sh "echo 'Pushing to Repo...'"
+        stage('Push the artifacts'){
+            steps{
+                script{
+                    // Only use 'sh' for plain shell commands like echo
+                    sh "echo 'Pushing to Repo...'"
             
-            // Native Jenkins Groovy commands must sit outside of 'sh'
-            def dockerImage = docker.image("${DOCKER_IMAGE}")
-            docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                dockerImage.push()
-            }
-        }
-    }
-}
+                     // Native Jenkins Groovy commands must sit outside of 'sh'
+                    def dockerImage = docker.image("${DOCKER_IMAGE}")
+                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
+                    dockerImage.push()
+                                }
+                            }
+                        }
+                    }
         
         stage('Checkout K8S manifest SCM'){
             steps {
