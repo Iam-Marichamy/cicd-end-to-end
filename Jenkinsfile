@@ -19,7 +19,7 @@ pipeline {
                 script {
                     sh '''
                     echo 'Buid Docker Image'
-                    docker build -t abhishekf5/cicd-e2e:${BUILD_NUMBER} .
+                    docker build -t abhishekf5/ultimate-cicd:${BUILD_NUMBER} .
                     '''
                 }
             }
