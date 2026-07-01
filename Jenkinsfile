@@ -34,8 +34,8 @@ pipeline {
                     sh '''
                     echo 'Push to Repo'
                     docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                dockerImage.push()
-            }
+                    dockerImage.push()
+                    }
                     '''
                 }
             }
