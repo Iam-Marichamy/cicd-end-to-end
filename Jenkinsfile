@@ -28,23 +28,24 @@ pipeline {
             }
         }
 
-        stage('Push the artifacts'){
-           steps{
-                script{
-                    sh '''
-                    echo 'Push to Repo'
-                    def dockerImage = docker.image("${DOCKER_IMAGE}")
-                    docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                    dockerImage.push()
-                    }
-                    '''
-                }
+    stage('Push the artifacts'){
+        steps{
+            script{
+            // Only use 'sh' for plain shell commands like echo
+            sh "echo 'Pushing to Repo...'"
+            
+            // Native Jenkins Groovy commands must sit outside of 'sh'
+            def dockerImage = docker.image("${DOCKER_IMAGE}")
+            docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
+                dockerImage.push()
             }
         }
+    }
+}
         
         stage('Checkout K8S manifest SCM'){
             steps {
-                git credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', 
+            :    git credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', 
                 url: 'https://github.com/iam-veeramalla/cicd-demo-manifests-repo.git',
                 branch: 'main'
             }
