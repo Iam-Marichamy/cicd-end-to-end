@@ -1,72 +1,46 @@
 pipeline {
     
-    agent any 
-    
+    agent any
     environment {
-        IMAGE_TAG = "${BUILD_NUMBER}"
-        REGISTRY_CREDENTIALS = credentials('docker-cred')
+        IMAGE_TAG = "$(BULID_NUMBER)"
+
     }
-    
     stages {
-        
-        stage('Checkout'){
-           steps {
+
+        stage ('Check_out'){
+            steps {
                 git credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', 
                 url: 'https://github.com/iam-Marichamy/cicd-end-to-end',
                 branch: 'main'
-           }
-        }
+            }
 
-        stage('Build Docker'){
-            steps{
-                script{
+        stage ('Build_Docker'){
+            steps {
+                script {
                     sh '''
                     echo 'Buid Docker Image'
                     docker build -t abhishekf5/cicd-e2e:${BUILD_NUMBER} .
                     '''
                 }
             }
-        }
-
-        stage('Push the artifacts'){
-            steps{
-                script{
-                    // Only use 'sh' for plain shell commands like echo
-                    sh "echo 'Pushing to Repo...'"
-            
-                     // Native Jenkins Groovy commands must sit outside of 'sh'
+        
+        stage ('Push the artifacts') {
+            environment {
+                DOCKER_IMAGE = "ramesh95/ultimate-cicd:${BUILD_NUMBER}"
+                // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
+                REGISTRY_CREDENTIALS = credentials('docker-cred')
+            }
+            steps {
+                script {
+                    sh 'cd java-maven-sonar-argocd-helm-k8s/spring-boot-app && docker build -t ${DOCKER_IMAGE} .'
                     def dockerImage = docker.image("${DOCKER_IMAGE}")
                     docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
                     dockerImage.push()
-                                }
-                            }
-                        }
-                    }
-        
-        stage('Checkout K8S manifest SCM'){
-            steps {
-            :    git credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', 
-                url: 'https://github.com/iam-veeramalla/cicd-demo-manifests-repo.git',
-                branch: 'main'
-            }
-        }
-        
-        stage('Update K8S manifest & push to Repo'){
-            steps {
-                script{
-                    withCredentials([usernamePassword(credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
-                        sh '''
-                        cat deploy.yaml
-                        sed -i '' "s/32/${BUILD_NUMBER}/g" deploy.yaml
-                        cat deploy.yaml
-                        git add deploy.yaml
-                        git commit -m 'Updated the deploy yaml | Jenkins Pipeline'
-                        git remote -v
-                        git push https://github.com/iam-veeramalla/cicd-demo-manifests-repo.git HEAD:main
-                        '''                        
-                    }
                 }
             }
         }
     }
+        
+    
+    
 }
