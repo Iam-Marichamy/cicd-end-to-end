@@ -13,7 +13,7 @@ pipeline {
                 url: 'https://github.com/iam-Marichamy/cicd-end-to-end',
                 branch: 'main'
             }
-
+        }
         stage ('Build_Docker'){
             steps {
                 script {
@@ -23,7 +23,7 @@ pipeline {
                     '''
                 }
             }
-        
+        }
         stage ('Push the artifacts') {
             environment {
                 DOCKER_IMAGE = "ramesh95/ultimate-cicd:${BUILD_NUMBER}"
@@ -40,7 +40,6 @@ pipeline {
             }
         }
     }
-        
+}        
+   
     
-    
-}
