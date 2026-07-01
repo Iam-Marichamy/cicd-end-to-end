@@ -19,14 +19,14 @@ pipeline {
                 script {
                     sh '''
                     echo 'Buid Docker Image'
-                    docker build -t abhishekf5/ultimate-cicd:${BUILD_NUMBER} .
+                    docker build -t abhishekf5/cicd-e2e:${BUILD_NUMBER} .
                     '''
                 }
             }
         }
         stage ('Push the artifacts') {
             environment {
-                DOCKER_IMAGE = "ramesh95/cicd-e2e:${BUILD_NUMBER}"
+                DOCKER_IMAGE = "ramesh95/ultimate-cicd:${BUILD_NUMBER}"
                 // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
                 REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
