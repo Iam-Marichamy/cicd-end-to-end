@@ -28,6 +28,10 @@ pipeline {
             environment {
                 SONAR_URL = "http://13.50.112.223:9000"
             }
+            tools {
+                    // This must match the exact name you gave it in the Tools menu
+                        sonarQubeScanner 'sonar-scanner-5' 
+                    }
             steps {
                 withCredentials([string(credentialsId: 'SonarQube', variable: 'SONAR_AUTH_TOKEN')]) {
                 sh 'sonar-scanner -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=my-python-app -Dsonar.sources=.'
