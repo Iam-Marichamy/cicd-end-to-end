@@ -1,62 +1,58 @@
 pipeline {
+    
     agent any
-    
     environment {
-        IMAGE_TAG = "${BUILD_NUMBER}" // Fixed typo: changed BULID to BUILD
+        IMAGE_TAG = "(BULID_NUMBER)"
+
     }
-    
     stages {
-        stage('Check_out') {
+
+        stage ('Check_out'){
             steps {
-                // Ensure 'f87a34a8-0e09-45e7-b9cf-6dc68feac670' exists in your Jenkins credentials
                 git credentialsId: 'f87a34a8-0e09-45e7-b9cf-6dc68feac670', 
-                    url: 'https://github.com/iam-Marichamy/cicd-end-to-end',
-                    branch: 'main'
+                url: 'https://github.com/iam-Marichamy/cicd-end-to-end',
+                branch: 'main'
             }
         }
-        
-        stage('Build_Docker') {
+        stage ('Build_Docker'){
             steps {
                 script {
                     sh '''
-                    echo 'Build Docker Image'
+                    echo 'Buid Docker Image'
                     docker build --no-cache -t ramesh95/ultimate-cicd:${BUILD_NUMBER} .
                     '''
                 }
             }
         }
-        
         stage('Static Code Analysis') {
             environment {
                 SONAR_URL = "http://13.50.112.223:9000"
             }
             steps {
                 script {
-                    // 1. Fetch the exact download path of your scanner installation 
+                    // Fetch the scanner directory explicitly using the tool type from your error log
                     def scannerHome = tool name: 'sonar-scanner-5', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
-                    
                     withCredentials([string(credentialsId: 'SonarQube', variable: 'SONAR_AUTH_TOKEN')]) {
-                        // 2. Used double quotes ("") and explicitly ran it from ${scannerHome}/bin/
-                        // 3. Escaped \$SONAR_AUTH_TOKEN so the shell handles the variable cleanly
-                        sh "${scannerHome}/bin/sonar-scanner -Dsonar.login=\$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=my-python-app -Dsonar.sources=."
+                    sh 'sonar-scanner -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=my-python-app -Dsonar.sources=.'
                     }
                 }
             }
         }
-        
-        stage('Push the artifacts') {
+        stage ('Push the artifacts') {
             environment {
                 DOCKER_IMAGE = "ramesh95/ultimate-cicd:${BUILD_NUMBER}"
+                // DOCKERFILE_LOCATION = "java-maven-sonar-argocd-helm-k8s/spring-boot-app/Dockerfile"
                 REGISTRY_CREDENTIALS = credentials('docker-cred')
             }
             steps {
                 script {
                     def dockerImage = docker.image("${DOCKER_IMAGE}")
                     docker.withRegistry('https://index.docker.io/v1/', "docker-cred") {
-                        dockerImage.push()
-                    }
+                    dockerImage.push()
                 }
             }
         }
     }
-}
+}        
+}   
+    
