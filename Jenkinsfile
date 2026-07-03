@@ -28,13 +28,13 @@ pipeline {
             environment {
                 SONAR_URL = "http://13.50.112.223:9000"
             }
-            tools {
-                    // This must match the exact name you gave it in the Tools menu
-                        sonarRunner 'sonar-scanner-5' 
-                    }
             steps {
-                withCredentials([string(credentialsId: 'SonarQube', variable: 'SONAR_AUTH_TOKEN')]) {
-                sh 'sonar-scanner -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=my-python-app -Dsonar.sources=.'
+                script {
+                    // Fetch the scanner directory explicitly using the tool type from your error log
+                    def scannerHome = tool name: 'sonar-scanner-5', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    withCredentials([string(credentialsId: 'SonarQube', variable: 'SONAR_AUTH_TOKEN')]) {
+                    sh 'sonar-scanner -Dsonar.login=$SONAR_AUTH_TOKEN -Dsonar.host.url=${SONAR_URL} -Dsonar.projectKey=my-python-app -Dsonar.sources=.'
+                    }
                 }
             }
         }
