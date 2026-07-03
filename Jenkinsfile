@@ -30,7 +30,7 @@ pipeline {
             }
             tools {
                     // This must match the exact name you gave it in the Tools menu
-                        sonarQubeScanner 'sonar-scanner-5' 
+                        sonarRunner 'sonar-scanner-5' 
                     }
             steps {
                 withCredentials([string(credentialsId: 'SonarQube', variable: 'SONAR_AUTH_TOKEN')]) {
